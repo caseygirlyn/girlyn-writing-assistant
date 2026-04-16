@@ -77,7 +77,7 @@ export default function App() {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <Send className="text-white w-5 h-5" />
             </div>
-            <h1 className="text-xl font-semibold tracking-tight">EmailAssistant</h1>
+            <h1 className="text-xl font-semibold tracking-tight">GirlynEmailAssistant</h1>
           </div>
           <div className="flex items-center gap-4">
             <button 

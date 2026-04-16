@@ -1,4 +1,4 @@
-# Intelligent Email Assistant
+# GirlynEmailAssistant
 
 An AI-powered professional email writing and refining tool designed to humanize tone, correct grammar, and ensure originality. Powered by Gemini 3.1 Pro.
 
