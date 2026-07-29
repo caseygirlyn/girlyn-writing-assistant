@@ -1,20 +1,26 @@
-# GirlynEmailAssistant
+# Girlyn Writing & Email Assistant
 
-An AI-powered professional email writing and refining tool designed to humanize tone, correct grammar, and ensure originality. Powered by Gemini 3.1 Pro.
+An AI-powered writing and email assistant designed to compose, humanize, rewrite, and polish emails, essays, articles, cover letters, and documents with authentic tone and high originality. Powered by Gemini 3.1 Pro.
 
-## 🚀 Features
+## 🚀 Key Features
 
-- **Email Writing & Rewriting**: Generate clear, concise, and professional emails from scratch or improve existing drafts.
-- **Tone Customization**: Adapt your message to various tones:
-  - 💼 **Professional**: Balanced and business-appropriate.
-  - 😊 **Friendly**: Warm and approachable.
-  - ✨ **Persuasive**: Compelling and action-oriented.
-  - 👔 **Formal**: Strict adherence to professional etiquette.
-  - 🚨 **Urgent**: High-priority and direct.
-- **AI Check & Humanization**: A simulated analysis that flags generic, overused, or "AI-like" phrases and suggests more natural, human-like alternatives.
-- **Subject Line Generator**: Get 3-5 catchy and relevant subject line suggestions for every email.
-- **Grammar & Style Correction**: Automatically fix punctuation, spelling, and sentence structure while improving readability.
-- **Modern UI**: A responsive, split-pane interface with smooth animations and one-click copy functionality.
+- **Multi-Format Support**:
+  - 📧 **Email**: Cold outreach, client communications, updates with subject line suggestions.
+  - 📝 **General Text**: Notes, memos, reports, and standard prose.
+  - 🎓 **Essay / Academic**: Essays, research papers, thesis statements, reports.
+  - 📰 **Article / Blog**: Articles, blog posts, news pieces with headline suggestions.
+  - 📄 **Cover Letter**: Job application letters and professional introductions.
+  - 📱 **Social Post**: LinkedIn posts, announcements, X/Twitter threads.
+
+- **Tone Customization**: Adapt tone to Professional, Friendly, Persuasive, Formal, Academic, Creative, Urgent, or Concise.
+
+- **AI Check & Humanizer**: Analyzes your draft for overused AI clichés, formulaic phrasing, and filler words, providing a realistic AI likelihood score and human-like suggestions.
+
+- **Headlines & Subject Lines**: Generates 3-5 catchy subject lines (for emails) or compelling titles/headlines (for articles, essays, and social posts).
+
+- **Grammar & Style Polish**: Automatically fixes punctuation, spelling, sentence structure, and flow without altering the intended meaning.
+
+- **Quick Starter Templates**: One-click templates to test cold emails, cover letters, blog introductions, and academic hooks immediately.
 
 ## 🛠️ Tech Stack
 
@@ -52,18 +58,6 @@ Start the development server:
 npm run dev
 ```
 The app will be available at `http://localhost:3000`.
-
-## 📖 Usage
-
-1. **Input**: Paste your rough draft or a brief description of your email points into the left text area.
-2. **Configure**: Select your desired **Tone** and add any **Additional Context** (e.g., "mention the deadline").
-3. **Process**:
-   - Click **Refine & Humanize** to polish an existing draft.
-   - Click **Write New** to generate a full email from your notes.
-   - Click **Fix Grammar** for a quick technical cleanup.
-4. **Review**:
-   - **Improved Email Tab**: View the final draft and copy it to your clipboard.
-   - **AI Check Tab**: See the "AI Likelihood Score" and review specific phrases that were humanized.
 
 ## 📄 License
 

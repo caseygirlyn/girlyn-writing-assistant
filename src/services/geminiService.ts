@@ -2,51 +2,61 @@ import { GoogleGenAI, Type } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
-export interface EmailAssistantResult {
-  improvedEmail: string;
+export type ContentFormat = 'email' | 'general' | 'essay' | 'article' | 'cover_letter' | 'social';
+
+export interface WritingAssistantResult {
+  improvedText: string;
   summaryOfChanges: string;
   suggestions: string;
-  subjectLines: string[];
+  headlinesOrSubjects: string[];
   aiLikelihoodScore: number; // 0 to 100
   flaggedSections: { original: string; reason: string; suggestion: string }[];
+  wordCount: number;
 }
 
-export async function processEmail(
+export async function processWriting(
   input: string,
   mode: 'write' | 'rewrite' | 'refine',
+  contentType: ContentFormat = 'email',
   tone: string = 'professional',
   additionalInstructions: string = ''
-): Promise<EmailAssistantResult> {
+): Promise<WritingAssistantResult> {
   const model = "gemini-3.1-pro-preview";
 
+  const formatNameMap: Record<ContentFormat, string> = {
+    email: "email",
+    general: "general text / document",
+    essay: "essay / academic draft",
+    article: "article / blog post",
+    cover_letter: "cover letter / job application",
+    social: "social media post / announcement"
+  };
+
+  const targetFormatName = formatNameMap[contentType] || "writing piece";
+
   const systemInstruction = `
-    You are an intelligent email assistant designed to write, rewrite, and refine emails with high professionalism and originality.
+    You are an intelligent, high-end writing and email assistant designed to write, rewrite, and refine all kinds of text (emails, essays, articles, cover letters, social posts, general text) with exceptional polish, clarity, and authentic human phrasing.
     
     Your goals:
-    1. Improve tone, clarity, grammar, and structure.
-    2. Adapt tone to: ${tone}.
-    3. Humanize the content, avoiding robotic or overly generic AI-sounding phrases.
-    4. Provide a simulated "AI-likelihood" analysis by flagging generic sections and suggesting human-like alternatives.
-    5. Ensure the message is appropriate for the target audience.
+    1. Structure, flow, clarity, and precision: Refine the text into top-tier, publication-ready ${targetFormatName}.
+    2. Adapt tone to: "${tone}".
+    3. Humanize the writing: Eliminate robotic AI clichés, filler words, passive voice overuses, and overly predictable transitions (like "In conclusion", "It is important to remember", "Delve into", "Tapestry", "Beacon", "Testament", "Furthermore").
+    4. Provide a realistic "AI-Likelihood" analysis (0-100% score) flagging generic, formulaic phrases and offering fresh, distinct human phrasing suggestions.
+    5. Provide 3-5 appropriate headlines/titles (for articles/essays/posts) or subject lines (for emails/letters).
     
-    Output MUST be a JSON object with the following structure:
-    {
-      "improvedEmail": "The final polished email text",
-      "summaryOfChanges": "A concise summary of what was improved",
-      "suggestions": "Optional further improvements or tips",
-      "subjectLines": ["3-5 subject line suggestions"],
-      "aiLikelihoodScore": 0-100 (percentage score of how 'generic/AI-like' the original was),
-      "flaggedSections": [
-        { "original": "text snippet", "reason": "why it sounds generic/AI-like", "suggestion": "human-like alternative" }
-      ]
-    }
+    Output MUST be a JSON object conforming strictly to the requested schema.
     
-    Additional Context: ${additionalInstructions}
+    Additional user instructions: ${additionalInstructions || "None"}
   `;
 
-  const prompt = mode === 'write' 
-    ? `Write a ${tone} email based on these points: ${input}`
-    : `Rewrite and refine this email to be ${tone}: ${input}`;
+  let prompt = "";
+  if (mode === 'write') {
+    prompt = `Write a fresh ${tone} ${targetFormatName} based on these core ideas/outline:\n\n${input}`;
+  } else if (mode === 'refine') {
+    prompt = `Correct all grammar, spelling, punctuation, and style flaws in this ${targetFormatName} while retaining its exact meaning:\n\n${input}`;
+  } else {
+    prompt = `Rewrite, humanize, and polish this ${targetFormatName} into a smooth ${tone} version:\n\n${input}`;
+  }
 
   try {
     const response = await ai.models.generateContent({
@@ -58,11 +68,12 @@ export async function processEmail(
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            improvedEmail: { type: Type.STRING },
+            improvedText: { type: Type.STRING },
             summaryOfChanges: { type: Type.STRING },
             suggestions: { type: Type.STRING },
-            subjectLines: { type: Type.ARRAY, items: { type: Type.STRING } },
+            headlinesOrSubjects: { type: Type.ARRAY, items: { type: Type.STRING } },
             aiLikelihoodScore: { type: Type.NUMBER },
+            wordCount: { type: Type.NUMBER },
             flaggedSections: {
               type: Type.ARRAY,
               items: {
@@ -76,15 +87,36 @@ export async function processEmail(
               }
             }
           },
-          required: ["improvedEmail", "summaryOfChanges", "suggestions", "subjectLines", "aiLikelihoodScore", "flaggedSections"]
+          required: ["improvedText", "summaryOfChanges", "suggestions", "headlinesOrSubjects", "aiLikelihoodScore", "wordCount", "flaggedSections"]
         }
       }
     });
 
     const result = JSON.parse(response.text || "{}");
-    return result as EmailAssistantResult;
+    if (!result.wordCount && result.improvedText) {
+      result.wordCount = result.improvedText.trim().split(/\s+/).length;
+    }
+    return result as WritingAssistantResult;
   } catch (error) {
-    console.error("Error processing email:", error);
+    console.error("Error processing writing task:", error);
     throw error;
   }
+}
+
+// Backward compatibility wrapper for email processing
+export async function processEmail(
+  input: string,
+  mode: 'write' | 'rewrite' | 'refine',
+  tone: string = 'professional',
+  additionalInstructions: string = ''
+) {
+  const res = await processWriting(input, mode, 'email', tone, additionalInstructions);
+  return {
+    improvedEmail: res.improvedText,
+    summaryOfChanges: res.summaryOfChanges,
+    suggestions: res.suggestions,
+    subjectLines: res.headlinesOrSubjects,
+    aiLikelihoodScore: res.aiLikelihoodScore,
+    flaggedSections: res.flaggedSections
+  };
 }

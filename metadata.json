@@ -1,5 +1,8 @@
 {
-  "name": "GirlynEmailAssistant",
-  "description": "A professional email writing and refining tool that humanizes tone, corrects grammar, and ensures originality.",
-  "requestFramePermissions": []
+  "name": "Girlyn Writing & Email Assistant",
+  "description": "An intelligent writing and email assistant for crafting, humanizing, and polishing emails, essays, articles, cover letters, and documents with high originality.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
