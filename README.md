@@ -1,6 +1,18 @@
-# Girlyn Writing & Email Assistant
+# GirlynWritingAssistant
 
 An AI-powered writing and email assistant designed to compose, humanize, rewrite, and polish emails, essays, articles, cover letters, and documents with authentic tone and high originality. Powered by Gemini 3.1 Pro.
+
+## 🎥 Demo & Screen Recording
+
+https://github.com/user-attachments/assets/demo.mp4
+
+> **Workflow Demonstration**:
+> 1. **Format Selection**: Switch seamlessly between **Email**, **General Text**, **Essay / Academic**, **Article / Blog**, **Cover Letter**, and **Social Post**.
+> 2. **Draft Input & Tone**: Provide bullet points or rough drafts (e.g. *"write follow up email to client regarding the outstanding payment"*) and select a target tone (**Friendly**, **Professional**, **Persuasive**, etc.).
+> 3. **Polished Draft & Suggestions**: Get 3-5 headline/subject suggestions, a humanized draft, structured change log, and context-specific writing tips.
+> 4. **AI Check & Humanizer**: Review the **Authenticity Percentage Gauge** (e.g. 95% Authentic), side-by-side authenticity vs AI likelihood meters, and flagged clichés with humanized alternatives.
+
+---
 
 ## 🚀 Key Features
 

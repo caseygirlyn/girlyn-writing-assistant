@@ -349,7 +349,7 @@ export default function App() {
                     <button
                       onClick={() => setActiveTab('text')}
                       className={cn(
-                        "px-5 py-2 rounded-xl text-xs font-bold transition-all",
+                        "px-5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer",
                         activeTab === 'text' ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
                       )}
                     >
@@ -358,17 +358,23 @@ export default function App() {
                     <button
                       onClick={() => setActiveTab('analysis')}
                       className={cn(
-                        "px-5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5",
+                        "px-5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer",
                         activeTab === 'analysis' ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
                       )}
                     >
                       AI Check & Humanizer
-                      <span className={cn(
-                        "px-1.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase",
-                        result.aiLikelihoodScore > 50 ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"
-                      )}>
-                        {result.aiLikelihoodScore}% AI
-                      </span>
+                      {(() => {
+                        const aiScore = Math.max(0, Math.min(100, Math.round(result.aiLikelihoodScore || 0)));
+                        const humanScore = 100 - aiScore;
+                        return (
+                          <span className={cn(
+                            "px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase",
+                            humanScore >= 65 ? "bg-emerald-100 text-emerald-700" : humanScore >= 40 ? "bg-amber-100 text-amber-700" : "bg-rose-100 text-rose-700"
+                          )}>
+                            {humanScore}% Authentic
+                          </span>
+                        );
+                      })()}
                     </button>
                   </div>
 
@@ -444,43 +450,144 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    {/* AI Likelihood Score Card */}
-                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 text-center">
-                      <div className="inline-flex items-center justify-center w-24 h-24 rounded-full border-8 border-slate-50 mb-3 relative">
-                        <svg className="w-full h-full -rotate-90">
-                          <circle
-                            cx="48"
-                            cy="48"
-                            r="40"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="8"
-                            className="text-slate-100"
-                          />
-                          <circle
-                            cx="48"
-                            cy="48"
-                            r="40"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="8"
-                            strokeDasharray={251.2}
-                            strokeDashoffset={251.2 - (251.2 * result.aiLikelihoodScore) / 100}
-                            className={cn(
-                              "transition-all duration-1000",
-                              result.aiLikelihoodScore > 50 ? "text-red-500" : "text-green-500"
-                            )}
-                          />
-                        </svg>
-                        <span className="absolute text-xl font-bold">{result.aiLikelihoodScore}%</span>
-                      </div>
-                      <h3 className="text-lg font-bold text-slate-800 mb-1">
-                        {result.aiLikelihoodScore > 50 ? 'Original Text Contained AI Clichés' : 'Authentic & Humanized Tone'}
-                      </h3>
-                      <p className="text-slate-500 text-xs max-w-sm mx-auto">
-                        Evaluates overused templates, buzzwords, and formulaic phrasing in your original draft.
-                      </p>
-                    </div>
+                    {/* AI & Human Authenticity Score Card */}
+                    {(() => {
+                      const aiScore = Math.max(0, Math.min(100, Math.round(result.aiLikelihoodScore || 0)));
+                      const humanScore = 100 - aiScore;
+                      const radius = 44;
+                      const circumference = 2 * Math.PI * radius;
+                      const strokeDashoffset = circumference - (circumference * humanScore) / 100;
+                      const isHighAuthenticity = humanScore >= 65;
+                      const isModerate = humanScore >= 40 && humanScore < 65;
+
+                      return (
+                        <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 text-center">
+                          {/* Radial Score Gauge */}
+                          <div className="inline-flex items-center justify-center w-28 h-28 mb-3 relative">
+                            <svg className="w-full h-full -rotate-90" viewBox="0 0 110 110">
+                              {/* Background Track */}
+                              <circle
+                                cx="55"
+                                cy="55"
+                                r={radius}
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="9"
+                                className="text-slate-100"
+                              />
+                              {/* Animated Progress Arc */}
+                              <circle
+                                cx="55"
+                                cy="55"
+                                r={radius}
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="9"
+                                strokeLinecap="round"
+                                strokeDasharray={circumference}
+                                strokeDashoffset={strokeDashoffset}
+                                className={cn(
+                                  "transition-all duration-1000",
+                                  isHighAuthenticity 
+                                    ? "text-emerald-500" 
+                                    : isModerate 
+                                    ? "text-amber-500" 
+                                    : "text-rose-500"
+                                )}
+                              />
+                            </svg>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                              <span className="text-2xl font-black text-slate-900 leading-none">
+                                {humanScore}%
+                              </span>
+                              <span className={cn(
+                                "text-[9px] font-extrabold uppercase tracking-wider mt-0.5",
+                                isHighAuthenticity 
+                                  ? "text-emerald-600" 
+                                  : isModerate 
+                                  ? "text-amber-600" 
+                                  : "text-rose-600"
+                              )}>
+                                Authentic
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Tone Status Badge & Title */}
+                          <div className="space-y-1.5 max-w-md mx-auto">
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-1">
+                              {isHighAuthenticity ? (
+                                <span className="bg-emerald-50 text-emerald-700 border border-emerald-200/80 px-3 py-0.5 rounded-full flex items-center gap-1">
+                                  <CheckCircle2 size={12} className="text-emerald-600" />
+                                  Authentic & Humanized Tone
+                                </span>
+                              ) : isModerate ? (
+                                <span className="bg-amber-50 text-amber-700 border border-amber-200/80 px-3 py-0.5 rounded-full flex items-center gap-1">
+                                  <AlertCircle size={12} className="text-amber-600" />
+                                  Moderate Tone Balance
+                                </span>
+                              ) : (
+                                <span className="bg-rose-50 text-rose-700 border border-rose-200/80 px-3 py-0.5 rounded-full flex items-center gap-1">
+                                  <AlertCircle size={12} className="text-rose-600" />
+                                  High AI Clichés Detected
+                                </span>
+                              )}
+                            </div>
+
+                            <h3 className="text-base font-bold text-slate-900">
+                              {isHighAuthenticity
+                                ? `Natural Human Flow (${humanScore}% Authenticity)`
+                                : isModerate
+                                ? `Mixed Draft (${humanScore}% Human / ${aiScore}% AI Clichés)`
+                                : `Formulaic Draft (${aiScore}% AI Cliché Probability)`}
+                            </h3>
+
+                            <p className="text-slate-500 text-xs leading-relaxed">
+                              {isHighAuthenticity
+                                ? "Your original draft demonstrated authentic sentence rhythm, vocabulary variety, and minimal corporate clichés."
+                                : isModerate
+                                ? "Several predictable transitions or formulaic phrases were identified in your draft and humanized."
+                                : "Your original draft contained recurring AI templates, buzzwords, or predictable sentence structures."}
+                            </p>
+                          </div>
+
+                          {/* Dual Comparative Breakdown Meters */}
+                          <div className="mt-6 pt-5 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+                            <div className="bg-slate-50/80 rounded-2xl p-3.5 border border-slate-100">
+                              <div className="flex items-center justify-between text-xs mb-1.5 font-medium">
+                                <span className="text-slate-700 flex items-center gap-1.5 font-semibold">
+                                  <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                                  Human Authenticity
+                                </span>
+                                <span className="text-emerald-700 font-bold">{humanScore}%</span>
+                              </div>
+                              <div className="w-full bg-slate-200/80 h-2 rounded-full overflow-hidden">
+                                <div 
+                                  className="bg-emerald-500 h-full rounded-full transition-all duration-700" 
+                                  style={{ width: `${humanScore}%` }}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="bg-slate-50/80 rounded-2xl p-3.5 border border-slate-100">
+                              <div className="flex items-center justify-between text-xs mb-1.5 font-medium">
+                                <span className="text-slate-700 flex items-center gap-1.5 font-semibold">
+                                  <span className="w-2 h-2 rounded-full bg-rose-500 inline-block"></span>
+                                  AI Cliché Likelihood
+                                </span>
+                                <span className="text-rose-700 font-bold">{aiScore}%</span>
+                              </div>
+                              <div className="w-full bg-slate-200/80 h-2 rounded-full overflow-hidden">
+                                <div 
+                                  className="bg-rose-500 h-full rounded-full transition-all duration-700" 
+                                  style={{ width: `${aiScore}%` }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     {/* Flagged Phrases */}
                     <div className="space-y-3">
