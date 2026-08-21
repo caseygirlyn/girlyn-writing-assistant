@@ -4,7 +4,7 @@ An AI-powered writing and email assistant designed to compose, humanize, rewrite
 
 ## 🎥 Demo & Screen Recording
 
-https://github.com/user-attachments/assets/demo.mp4
+![Girlyn Writing Assistant Demo](https://girlyn.com/images/Girlyn-Writing-Assistant.gif)
 
 > **Workflow Demonstration**:
 > 1. **Format Selection**: Switch seamlessly between **Email**, **General Text**, **Essay / Academic**, **Article / Blog**, **Cover Letter**, and **Social Post**.
